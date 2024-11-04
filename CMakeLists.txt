@@ -64,7 +64,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
                       webview::core
-#                      webview::webview
                       spdlog::spdlog
                       Graaf::Graaf
                       ${COREGRAPHICS_LIBRARY}
