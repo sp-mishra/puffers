@@ -1,5 +1,7 @@
+#include <Eigen/Dense>
 #include "webview/webview.h"
 #include "ScreenUtils.hpp"
+#include "StringUtils.hpp"
 #include "Log.hpp"
 #include <iostream>
 #include <thread>
@@ -8,18 +10,22 @@
 
 namespace gk = groklab;
 
-int main() {
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+
+void testWebview() {
     const gk::ScreenSize screenSize = gk::getScreenSize();
 
     std::cout << "Screen Width: " << screenSize.width << ", Screen Height: " << screenSize.height << std::endl;
     try {
         long count = 0;
+        const int heightDiv = 1;
+        const int widthDiv = 1;
 
         // Read the content of test.html
         std::ifstream file("./web/index.html");
         if (!file) {
             std::cerr << "Could not open the file!" << std::endl;
-            return 1;
         }
         std::stringstream buffer;
         buffer << file.rdbuf();
@@ -27,7 +33,7 @@ int main() {
 
         webview::webview w(true, nullptr);
         w.set_title("Bind Example");
-        w.set_size(screenSize.width/2, screenSize.height/2, WEBVIEW_HINT_NONE);
+        w.set_size(screenSize.width/widthDiv, screenSize.height/heightDiv, WEBVIEW_HINT_NONE);
 
         // A binding that counts up or down and immediately returns the new value.
         w.bind("count", [&](const std::string &req) -> std::string {
@@ -55,8 +61,20 @@ int main() {
         w.run();
     } catch (const webview::exception &e) {
         gk::critical("Failed to initialize FluidUI with error {}", e.what());
-        return 1;
     }
+}
 
+void testEigen() {
+    MatrixXd m = MatrixXd::Random(3,3);
+    m = (m + MatrixXd::Constant(3,3,1.2)) * 50;
+    gk::info("m = \n{}", gk::StringUtils::toString(m));
+    VectorXd v(3);
+    v << 1, 2, 3;
+    gk::info("m * v =\n{}", gk::StringUtils::toString(m * v));
+}
+
+int main() {
+    // testWebview();
+    testEigen();
     return 0;
 }

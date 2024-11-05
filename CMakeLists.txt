@@ -22,6 +22,7 @@ find_package(Threads REQUIRED)
 include(FetchContent)
 include_directories(include)
 include_directories(third_party)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
@@ -50,21 +51,50 @@ set(SKIP_TESTS ON)
 set(SKIP_EXAMPLES ON)
 set(SKIP_BENCHMARKS ON)
 
+# reflect-cpp
+set(REFLECTCPP_JSON ON)
+set(REFLECTCPP_BSON OFF)
+set(REFLECTCPP_CBOR OFF)
+set(REFLECTCPP_XML OFF)
+
+# JoltPhysics
+set(DOUBLE_PRECISION OFF)
+set(GENERATE_DEBUG_SYMBOLS OFF)
+set(ENABLE_INSTALL OFF)
+set(TARGET_UNIT_TESTS OFF)
+set(TARGET_HELLO_WORLD OFF)
+set(TARGET_PERFORMANCE_TEST OFF)
+set(TARGET_SAMPLES OFF)
+set(TARGET_VIEWER ON)
+
+# Eigen
+set(EIGEN_BUILD_TESTING OFF)
+set(EIGEN_BUILD_TESTING OFF)
+set(EIGEN_BUILD_SHARED_LIBS OFF)
+
 add_subdirectory(third_party/graaf)
 add_subdirectory(third_party/spdlog)
+add_subdirectory(third_party/reflect-cpp)
+add_subdirectory(third_party/eigen)
 
 find_library(COREGRAPHICS_LIBRARY CoreGraphics)
 add_executable(${PROJECT_NAME} main.cpp
                include/Log.hpp
                include/FileUtils.hpp
-               include/ScreenUtils.hpp)
+               include/ScreenUtils.hpp
+               include/SceneGraph.hpp
+               include/PhysicsEngine.hpp
+               include/StringUtils.hpp)
 
 # Set C++23 for the main project target
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
+#set_target_properties(eigen PROPERTIES CXX_STANDARD 17)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
                       webview::core
                       spdlog::spdlog
+                      reflectcpp
+                      eigen
                       Graaf::Graaf
                       ${COREGRAPHICS_LIBRARY}
                       )
